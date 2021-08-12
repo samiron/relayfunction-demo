@@ -1,11 +1,10 @@
 package of.samiron.demo.relayfunctiondemo.model;
 
-import lombok.*;
-import of.samiron.demo.relayfunctiondemo.dto.GroupDTO;
-import of.samiron.demo.relayfunctiondemo.dto.UserDTO;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Builder
 @Entity
@@ -21,18 +20,4 @@ public class Group {
 	@Column(name = "group_name")
 	private String name;
 
-//	@ManyToMany
-//	@Column
-//	List<User> users;
-
-	public Group from(GroupDTO groupDTO) {
-		return Group.builder().build();
-	}
-
-	public GroupDTO toDto() {
-		return GroupDTO.builder()
-				.id(this.id)
-				.name(this.name)
-				.build();
-	}
 }

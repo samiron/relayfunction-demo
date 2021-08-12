@@ -2,13 +2,15 @@ package of.samiron.demo.relayfunctiondemo.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import of.samiron.demo.relayfunctiondemo.dto.UserDTO;
 
 import javax.persistence.*;
-import java.util.List;
+import java.time.LocalDate;
+import java.util.Date;
 
 @Builder
+@Data
 @Entity
 @Table( name = "users")
 @NoArgsConstructor
@@ -19,20 +21,16 @@ public class User {
 	@GeneratedValue(strategy= GenerationType.AUTO)
 	Integer id;
 
-	@Column(name = "first_name")
-	String firstName;
-
-	@Column(name = "last_name")
-	String lastName;
+	@Column(name = "full_name")
+	String fullName;
 
 	@Column(name = "email")
 	String email;
 
-//	@Column(name = "group_id")
-//	@OneToMany()
-//	Group groups;
+	@Column(name="activation_date")
+	LocalDate activationDate;
 
-	public User from(UserDTO userDTO) {
-		return User.builder().build();
-	}
+	@Column(name="expiration_date")
+	LocalDate expirationDate;
+
 }
