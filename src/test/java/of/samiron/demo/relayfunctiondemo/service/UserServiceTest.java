@@ -43,6 +43,7 @@ class UserServiceTest {
 	@InjectMocks
 	UserService userService;
 
+
 	@Test
 	void createUser_success() {
 		User user = validUser(null, "Person 1");
@@ -50,6 +51,7 @@ class UserServiceTest {
 
 		// Given
 		mockUserRepositorySave();
+		userValidator.setUserRepository(userRepository);
 
 		// When
 		User createdUser = userService.createUser(user);
@@ -108,6 +110,26 @@ class UserServiceTest {
 		assertThat(th.getMessage(), is(equalTo("Expiration date can not be before activation date")));
 		Mockito.verify(userRepository).findById(1);
 		Mockito.verifyNoMoreInteractions(userRepository);
+	}
+
+	@Test
+	void createUser_fail_unique_email_address() {
+		String email = "already@exists.com";
+		User newUser = validUser(null, "Person two");
+		newUser.setEmail(email);
+		newUser.setExpirationDate(null);
+
+		//Given
+		Mockito.doReturn(1L).when(userRepository).countByEmail(email);
+		userValidator.setUserRepository(userRepository);
+
+		// When
+		Throwable th = assertThrows(UserValidationException.class, () -> userService.createUser(newUser));
+
+		// Then
+		assertThat(th.getMessage(), is(equalTo("Email address already exists")));
+		Mockito.verify(userRepository).countByEmail(email);
+		Mockito.verify(userValidator).validateCreateUser(any(User.class));
 	}
 
 	private void mockUserRepositorySave() {
