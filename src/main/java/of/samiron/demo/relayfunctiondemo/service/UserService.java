@@ -16,9 +16,11 @@ public class UserService {
 
 	private final UserRepository userRepository;
 
+	private final UserValidator userValidator;
+
 	public User createUser(User user) {
 
-		UserValidator
+		userValidator
 				.VALIDATE_CREATE_USER
 				.apply(user);
 
@@ -33,7 +35,7 @@ public class UserService {
 			throw new EntityNotFoundException("User not found");
 		}
 
-		UserValidator
+		userValidator
 				.VALIDATE_UPDATE_USER
 				.apply(user, oldUser.get());
 

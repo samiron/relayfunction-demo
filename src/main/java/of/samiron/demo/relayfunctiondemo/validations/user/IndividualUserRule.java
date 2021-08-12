@@ -5,9 +5,13 @@ import of.samiron.demo.relayfunctiondemo.function.RelayOne;
 
 import java.util.Objects;
 
-public interface CreateUserRule extends RelayOne<User> {
+/**
+ * These rules concerns only one user object.
+ * It does not need any other object for the business logic.
+ */
+public interface IndividualUserRule extends RelayOne<User> {
 
-	default CreateUserRule next(CreateUserRule nextFn) {
+	default IndividualUserRule next(IndividualUserRule nextFn) {
 		Objects.requireNonNull(nextFn);
 		return (t) -> {
 			this.apply(t);

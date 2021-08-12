@@ -1,8 +1,14 @@
 package of.samiron.demo.relayfunctiondemo.validations.user;
 
 import of.samiron.demo.relayfunctiondemo.model.User;
+import of.samiron.demo.relayfunctiondemo.repository.UserRepository;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 
@@ -11,7 +17,14 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@ExtendWith(MockitoExtension.class)
 class UserValidatorTest {
+
+	@Mock
+	UserRepository userRepository;
+
+	@InjectMocks
+	UserValidator userValidator;
 
 	@ParameterizedTest
 	@CsvSource({"-", "invalid_email_address"})
@@ -20,7 +33,7 @@ class UserValidatorTest {
 		user.setEmail(invalidEmail);
 		Throwable exc = assertThrows(
 				UserValidationException.class,
-				() -> UserValidator.emailAddressIsValid().apply(user));
+				() -> userValidator.emailAddressIsValid().apply(user));
 		assertThat(exc.getMessage(), is(equalTo("Invalid email address")));
 	}
 
@@ -29,7 +42,7 @@ class UserValidatorTest {
 	void emailAddressIsValid_pass(String validEmail) {
 		User user = aValidUser();
 		user.setEmail(validEmail);
-		UserValidator.emailAddressIsValid().apply(user);
+		userValidator.emailAddressIsValid().apply(user);
 	}
 
 	@ParameterizedTest
@@ -39,7 +52,7 @@ class UserValidatorTest {
 		user.setFullName(inValidName);
 		Throwable exc = assertThrows(
 				UserValidationException.class,
-				() -> UserValidator.nameMustExist().apply(user));
+				() -> userValidator.nameMustExist().apply(user));
 		assertThat(exc.getMessage(), is(equalTo("User name must exists")));
 	}
 
@@ -48,7 +61,7 @@ class UserValidatorTest {
 	void nameMustExist_pass(String validName) {
 		User user = aValidUser();
 		user.setFullName(validName);
-		UserValidator.nameMustExist().apply(user);
+		userValidator.nameMustExist().apply(user);
 	}
 
 	@ParameterizedTest
@@ -58,7 +71,7 @@ class UserValidatorTest {
 		user.setFullName(inValidName);
 		Throwable exc = assertThrows(
 				UserValidationException.class,
-				() -> UserValidator.nameMustHaveAlphaNums().apply(user));
+				() -> userValidator.nameMustHaveAlphaNums().apply(user));
 		assertThat(exc.getMessage(), is(equalTo("Name should have alphanum characters separated by one space")));
 	}
 
@@ -67,7 +80,7 @@ class UserValidatorTest {
 	void nameMustHaveAlphaNums_pass(String validName) {
 		User user = aValidUser();
 		user.setFullName(validName);
-		UserValidator.nameMustHaveAlphaNums().apply(user);
+		userValidator.nameMustHaveAlphaNums().apply(user);
 	}
 
 	@ParameterizedTest
@@ -78,7 +91,7 @@ class UserValidatorTest {
 		user.setActivationDate(invalidActivationDate);
 
 		Throwable th = assertThrows(UserValidationException.class,
-				() -> UserValidator.activationDateMustExist().apply(user));
+				() -> userValidator.activationDateMustExist().apply(user));
 		assertThat(th.getMessage(), is(equalTo("Activation date must be today or in future")));
 	}
 
@@ -88,7 +101,7 @@ class UserValidatorTest {
 		User user = aValidUser();
 		LocalDate invalidActivationDate = LocalDate.now().plusDays(daysOffset);
 		user.setActivationDate(invalidActivationDate);
-		UserValidator.activationDateMustExist().apply(user);
+		userValidator.activationDateMustExist().apply(user);
 	}
 
 	private User aValidUser() {
