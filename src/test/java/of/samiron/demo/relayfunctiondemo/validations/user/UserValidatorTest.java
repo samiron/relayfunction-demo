@@ -46,21 +46,21 @@ class UserValidatorTest {
 
 	@ParameterizedTest
 	@CsvSource({"'    '"})
-	void nameMustExist_fail(String inValidName) {
+	void nameIsNotEmpty_fail(String inValidName) {
 		User user = aValidUser();
 		user.setFullName(inValidName);
 		Throwable exc = assertThrows(
 				UserValidationException.class,
-				() -> userValidator.nameMustExist().apply(user));
+				() -> userValidator.nameIsNotEmpty().apply(user));
 		assertThat(exc.getMessage(), is(equalTo("User name must exists")));
 	}
 
 	@ParameterizedTest
 	@CsvSource({"Doyan", "Royan"})
-	void nameMustExist_pass(String validName) {
+	void nameIsNotEmpty_pass(String validName) {
 		User user = aValidUser();
 		user.setFullName(validName);
-		userValidator.nameMustExist().apply(user);
+		userValidator.nameIsNotEmpty().apply(user);
 	}
 
 	@ParameterizedTest

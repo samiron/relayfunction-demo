@@ -19,20 +19,20 @@ public class UserValidator {
 	private UserRepository userRepository;
 
 	public void validateCreateUser(User user) {
-		nameMustExist()
+		nameIsNotEmpty()
 				.next(emailAddressIsValid())
+				.next(emailAddressMustBeUnique())
 				.next(nameMustHaveAlphaNums())
 				.next(activationDateMustExist())
 				.next(expirationDateShouldNotExist())
-				.next(emailAddressMustBeUnique())
 		.apply(user);
 	}
 
 	public void validateUpdateUser(User newUser, User oldUser) {
 		emailCannotBeChanged()
+				.next(nameIsNotEmpty())
 				.next(activationDateCannotBeChanged())
 				.next(expirationDateCannotBeBeforeActivationDate())
-				.next(nameMustExist())
 		.apply(newUser, oldUser);
 	}
 
@@ -79,7 +79,7 @@ public class UserValidator {
 		};
 	}
 
-	IndividualUserRule nameMustExist() {
+	IndividualUserRule nameIsNotEmpty() {
 		return (user) -> {
 			if(user.getFullName() == null || user.getFullName().isBlank()) {
 				throw new UserValidationException("User name must exists");
