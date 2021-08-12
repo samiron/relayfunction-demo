@@ -22,13 +22,24 @@ public class UserValidator {
 					.next(emailAddressIsValid())
 					.next(nameMustHaveAlphaNums())
 					.next(activationDateMustExist())
-					.next(expirationDateShouldNotExist());
+					.next(expirationDateShouldNotExist())
+					.next(emailAddressMustBeUnique());
 
 	public ContextualUserRule VALIDATE_UPDATE_USER =
 			emailCannotBeChanged()
 					.next(activationDateCannotBeChanged())
 					.next(expirationDateCannotBeBeforeActivationDate())
 					.next(nameMustExist());
+
+	IndividualUserRule emailAddressMustBeUnique() {
+		return (user -> {
+			String email = user.getEmail();
+			boolean exists = userRepository.countByEmail(email) != 0;
+			if(exists) {
+				throw new UserValidationException("Email address already exists");
+			}
+		});
+	}
 
 	ContextualUserRule expirationDateCannotBeBeforeActivationDate() {
 		return (newUser, oldUser) -> {
