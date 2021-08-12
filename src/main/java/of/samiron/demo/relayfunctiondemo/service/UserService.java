@@ -1,6 +1,7 @@
 package of.samiron.demo.relayfunctiondemo.service;
 
 import lombok.AllArgsConstructor;
+import lombok.Setter;
 import of.samiron.demo.relayfunctiondemo.model.User;
 import of.samiron.demo.relayfunctiondemo.repository.UserRepository;
 import of.samiron.demo.relayfunctiondemo.validations.user.UserValidator;
@@ -11,7 +12,8 @@ import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor(onConstructor = @__(@Autowired))
+@AllArgsConstructor()
+@Setter(onMethod = @__(@Autowired))
 public class UserService {
 
 	private final UserRepository userRepository;
@@ -20,12 +22,9 @@ public class UserService {
 
 	public User createUser(User user) {
 
-		userValidator
-				.VALIDATE_CREATE_USER
-				.apply(user);
+		userValidator.validateCreateUser(user);
 
 		return userRepository.save(user);
-
 	}
 
 	public User updateUser(User user) {
@@ -35,9 +34,7 @@ public class UserService {
 			throw new EntityNotFoundException("User not found");
 		}
 
-		userValidator
-				.VALIDATE_UPDATE_USER
-				.apply(user, oldUser.get());
+		userValidator.validateUpdateUser(user, oldUser.get());
 
 		return userRepository.save(user);
 	}

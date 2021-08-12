@@ -2,6 +2,8 @@ package of.samiron.demo.relayfunctiondemo.validations.user;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import of.samiron.demo.relayfunctiondemo.model.User;
 import of.samiron.demo.relayfunctiondemo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -9,27 +11,30 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 
 @Component
-@AllArgsConstructor(onConstructor = @__(@Autowired))
+@AllArgsConstructor()
 @NoArgsConstructor
+@Setter(onMethod = @__(@Autowired))
 public class UserValidator {
-
 
 	private UserRepository userRepository;
 
+	public void validateCreateUser(User user) {
+		nameMustExist()
+				.next(emailAddressIsValid())
+				.next(nameMustHaveAlphaNums())
+				.next(activationDateMustExist())
+				.next(expirationDateShouldNotExist())
+				.next(emailAddressMustBeUnique())
+		.apply(user);
+	}
 
-	public IndividualUserRule VALIDATE_CREATE_USER =
-			nameMustExist()
-					.next(emailAddressIsValid())
-					.next(nameMustHaveAlphaNums())
-					.next(activationDateMustExist())
-					.next(expirationDateShouldNotExist())
-					.next(emailAddressMustBeUnique());
-
-	public ContextualUserRule VALIDATE_UPDATE_USER =
-			emailCannotBeChanged()
-					.next(activationDateCannotBeChanged())
-					.next(expirationDateCannotBeBeforeActivationDate())
-					.next(nameMustExist());
+	public void validateUpdateUser(User newUser, User oldUser) {
+		emailCannotBeChanged()
+				.next(activationDateCannotBeChanged())
+				.next(expirationDateCannotBeBeforeActivationDate())
+				.next(nameMustExist())
+		.apply(newUser, oldUser);
+	}
 
 	IndividualUserRule emailAddressMustBeUnique() {
 		return (user -> {
