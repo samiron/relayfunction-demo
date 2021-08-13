@@ -138,4 +138,8 @@ Following function implements the unique email address rule. It needs the new da
 	}
 ```
 
+## Test
+Look for `UserValidatorTest.java` to see individual business logics are testable.  
+Look in `UserServiceTest.java` for some basic tests for UserService.
+
 
