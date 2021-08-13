@@ -38,7 +38,7 @@ public class UserValidator {
 		.apply(newUser, oldUser);
 	}
 
-	IndividualUserRule emailAddressMustBeUnique() {
+	SingleUserRule emailAddressMustBeUnique() {
 		return (user -> {
 			String email = user.getEmail();
 			boolean exists = userRepository.countByEmail(email) != 0;
@@ -73,7 +73,7 @@ public class UserValidator {
 	}
 
 
-	IndividualUserRule emailAddressIsValid() {
+	SingleUserRule emailAddressIsValid() {
 		return (user) -> {
 			if(user.getEmail() == null || !user.getEmail().matches("^(.+)@(.+)$")) {
 				throw new UserValidationException("Invalid email address");
@@ -81,7 +81,7 @@ public class UserValidator {
 		};
 	}
 
-	IndividualUserRule nameIsNotEmpty() {
+	SingleUserRule nameIsNotEmpty() {
 		return (user) -> {
 			if(user.getFullName() == null || user.getFullName().isBlank()) {
 				throw new UserValidationException("User name must exists");
@@ -89,7 +89,7 @@ public class UserValidator {
 		};
 	}
 
-	IndividualUserRule nameMustHaveAlphaNums() {
+	SingleUserRule nameMustHaveAlphaNums() {
 		return (user) -> {
 			if(!user.getFullName().matches("^[a-zA-Z0-9]+\\s[a-zA-Z0-9]+$")) {
 				throw new UserValidationException("Name should have alphanum characters separated by one space");
@@ -97,7 +97,7 @@ public class UserValidator {
 		};
 	}
 
-	IndividualUserRule activationDateMustExist() {
+	SingleUserRule activationDateMustExist() {
 		return (user) -> {
 			if(user.getActivationDate() == null || user.getActivationDate().isBefore(LocalDate.now())) {
 				throw new UserValidationException("Activation date must be today or in future");
@@ -105,7 +105,7 @@ public class UserValidator {
 		};
 	}
 
-	IndividualUserRule expirationDateShouldNotExist() {
+	SingleUserRule expirationDateShouldNotExist() {
 		return (user) -> {
 			if(user.getExpirationDate() != null) {
 				throw new UserValidationException("Should not have any expiration date when creating");
