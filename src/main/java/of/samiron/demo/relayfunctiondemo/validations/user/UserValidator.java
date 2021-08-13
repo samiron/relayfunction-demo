@@ -3,6 +3,7 @@ package of.samiron.demo.relayfunctiondemo.validations.user;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import of.samiron.demo.relayfunctiondemo.function.RelayTwo;
 import of.samiron.demo.relayfunctiondemo.model.User;
 import of.samiron.demo.relayfunctiondemo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ public class UserValidator {
 		emailCannotBeChanged()
 				.next(nameIsNotEmpty())
 				.next(activationDateCannotBeChanged())
+				.next(activationDateMustExist())
 				.next(expirationDateCannotBeBeforeActivationDate())
 		.apply(newUser, oldUser);
 	}
@@ -46,7 +48,7 @@ public class UserValidator {
 		});
 	}
 
-	ContextualUserRule expirationDateCannotBeBeforeActivationDate() {
+	RelayTwo<User, User> expirationDateCannotBeBeforeActivationDate() {
 		return (newUser, oldUser) -> {
 			if(newUser.getExpirationDate() != null && newUser.getExpirationDate().isBefore(oldUser.getActivationDate())) {
 				throw new UserValidationException("Expiration date can not be before activation date");
@@ -54,7 +56,7 @@ public class UserValidator {
 		};
 	}
 
-	ContextualUserRule activationDateCannotBeChanged() {
+	RelayTwo<User, User> activationDateCannotBeChanged() {
 		return (newUser, oldUser) -> {
 			if(!newUser.getActivationDate().equals(oldUser.getActivationDate())) {
 				throw new UserValidationException("Activation date must not be changed");
@@ -62,7 +64,7 @@ public class UserValidator {
 		};
 	}
 
-	ContextualUserRule emailCannotBeChanged() {
+	RelayTwo<User, User> emailCannotBeChanged() {
 		return (newUser, oldUser) -> {
 			if(!newUser.getEmail().equals(oldUser.getEmail())) {
 				throw new UserValidationException("Email address can not be changed");

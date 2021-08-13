@@ -64,13 +64,14 @@ class UserServiceTest {
 	@Test
 	void createUser_fail_expiration_exists() {
 		User user = validUser(null, "Person 1");
+		// Given
+		userValidator.setUserRepository(userRepository);
 
 		// When
 		Throwable th = assertThrows(UserValidationException.class, () -> userService.createUser(user));
 
 		//Then
 		assertThat(th.getMessage(), is(equalTo("Should not have any expiration date when creating")));
-		Mockito.verifyNoMoreInteractions(userRepository);
 	}
 
 	@Test
